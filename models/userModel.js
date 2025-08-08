@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
   dob: { type: String }, // Store as string for simplicity (DD/MM/YYYY)
   address: { type: String },
   profileImage: { type: String },
-  kycStatus: { type: String, enum: ['verify', 'pending', 'verified'], default: 'verify' },
+  kycStatus: { type: String, enum: ['verify', 'pending', 'verified','rejected'], default: 'verify' },
   kycType: { type: String },
   kycFrontImage: { type: String },
   kycBackImage: { type: String },

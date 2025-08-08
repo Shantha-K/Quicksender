@@ -9,5 +9,8 @@ app.use(express.json());
 app.use('/api/auth', authRoutes);
 
 mongoose.connect('mongodb://localhost:27017/quicksender', { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => app.listen(3000, () => console.log('Server running')))
+  .then(() => {
+    console.log('Database connected');
+    app.listen(3000, () => console.log('Server running'));
+  })
   .catch(err => console.error(err));

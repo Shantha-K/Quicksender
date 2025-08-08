@@ -1,3 +1,56 @@
+// Get registered user by _id
+exports.getRegistered = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    // Exclude sensitive fields if needed
+    const { otp, otpExpires, ...userObj } = user.toObject();
+    res.json({ success: true, data: userObj });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
+// KYC Reject
+exports.kycReject = async (req, res) => {
+  try {
+    const userId = req.body.userId || req.user.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    user.kycStatus = 'rejected';
+    await user.save();
+    // Exclude notifications from response
+    const { notifications, ...userWithoutNotifications } = user.toObject();
+    res.json({ success: true, message: 'KYC rejected', data: userWithoutNotifications });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
+// KYC Approved
+exports.kycApproved = async (req, res) => {
+  try {
+    const userId = req.body.userId || req.user.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+    // Check if KYC details are present
+    if (!user.kycType || !user.kycFrontImage || !user.kycBackImage) {
+      return res.status(400).json({ success: false, message: 'KYC details incomplete. Please submit kycType, kycFrontImage, and kycBackImage first.' });
+    }
+    user.kycStatus = 'verified';
+    await user.save();
+    // Exclude notifications from response
+    const { notifications, ...userWithoutNotifications } = user.toObject();
+    res.json({ success: true, message: 'KYC approved', data: userWithoutNotifications });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error', error: err.message });
+  }
+};
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your_jwt_secret_key';
 const User = require('../models/userModel');
