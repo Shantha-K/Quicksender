@@ -31,9 +31,15 @@ const deliveryRequestSchema = new mongoose.Schema({
     paymentType: String,
     deliveryFee: String
   },
-  status: { type: String, enum: ['pending', 'assigned', 'picked', 'delivered', 'cancelled'], default: 'pending' },
+  status: { type: String, enum: ['pending', 'assigned', 'picked', 'on-the-way', 'started-delivery', 'delivered', 'cancelled'], default: 'pending' },
   assignedPartnerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+  acceptedPartners: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   broadcastedTo: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  pickupImages: [String],
+  tracking: [{ status: String, timestamp: Date, location: String }],
+  deliveryOtp: { type: String },
+  rating: { type: Number },
+  review: { type: String },
   lastUpdate: { type: Date, default: Date.now }
 });
 

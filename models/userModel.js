@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   kycType: { type: String },
   kycFrontImage: { type: String },
   kycBackImage: { type: String },
+  walletBalance: { type: Number, default: 0 },
   notifications: [{
     title: String,
     message: String,
@@ -19,7 +20,8 @@ const userSchema = new mongoose.Schema({
     read: { type: Boolean, default: false }
   }],
   otp: { type: String },
-  otpExpires: { type: Date }
+  otpExpires: { type: Date },
+  jwtToken: { type: String }
 });
 
 module.exports = mongoose.model('User', userSchema);
