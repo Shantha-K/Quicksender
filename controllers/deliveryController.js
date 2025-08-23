@@ -203,7 +203,10 @@ exports.createRequest = async (req, res) => {
       broadcastedTo: [],
       lastUpdate: new Date()
     });
-    res.json({ success: true, message: 'Delivery request created', data: request });
+    // Deduct estimated amount from user's wallet
+    user.walletBalance = balance - estAmount;
+    await user.save();
+    res.json({ success: true, message: 'Delivery request created', data: request, walletBalance: user.walletBalance });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Server error', error: err.message });
   }

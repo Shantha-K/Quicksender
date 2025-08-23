@@ -277,8 +277,11 @@ exports.walletBalances = walletBalances;
 exports.getWallet = async (req, res) => {
   const userId = req.params.id;
   if (!userId) return res.status(400).json({ success: false, message: 'User ID required' });
-  const balance = walletBalances[userId] || 0;
-  const transactions = walletTransactions[userId] || [];
+  const user = await User.findById(userId);
+  if (!user) return res.status(404).json({ success: false, message: 'User not found' });
+  const balance = user.walletBalance || 0;
+  // Gather all transactions for this user
+  const transactions = walletTransactions[userId] ? [...walletTransactions[userId]] : [];
   res.json({ success: true, balance, userId, transactions });
 };
 
