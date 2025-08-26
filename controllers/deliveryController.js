@@ -13,13 +13,9 @@ exports.acceptRequest = async (req, res) => {
     // Always add partner to acceptedPartners if not already present
     if (!request.acceptedPartners.includes(user._id)) {
       request.acceptedPartners.push(user._id);
-    }
-    // If still pending, assign partner and update status
-    if (request.status === 'pending') {
-      request.status = 'assigned';
-      request.assignedPartnerId = user._id;
       request.lastUpdate = new Date();
     }
+    // Do NOT assign partner or change status here
     await request.save();
     res.json({ success: true, message: 'Request accepted', data: request });
   } catch (err) {
@@ -30,8 +26,7 @@ exports.acceptRequest = async (req, res) => {
 // Get all partners who accepted a request
 exports.getAcceptedPartners = async (req, res) => {
   try {
-    // No authentication required, public API
-    // Fetch delivery partner details based on userId (delivery partner) query param
+    
     const { userId } = req.query;
     const request = await DeliveryRequest.findById(req.params.requestId)
       .populate('acceptedPartners', 'name email mobile address rating reviews city state profileImage');
